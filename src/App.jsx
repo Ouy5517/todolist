@@ -334,10 +334,11 @@ export function App() {
   }
 
   return (
-    <div className="app-shell">
-      <header className="topbar">
+    <div className="app-shell focus-board">
+      <header className="topbar focus-topbar">
         <button className="brand" type="button" onClick={() => changeView("today")} aria-label="回到今日任务"><span className="brand-mark" aria-hidden="true" /><span>Quiet List</span></button>
         <div className="topbar-actions">
+          <span className="topbar-mode">FOCUS BOARD / 02</span>
           <button className="icon-button" type="button" onClick={() => setIsPaletteOpen((open) => !open)} aria-label="打开调色盘" aria-expanded={isPaletteOpen}><Palette size={19} /></button>
           {isSearchOpen ? <label className="search-field"><MagnifyingGlass size={17} /><input autoFocus value={search} onChange={(event) => setSearch(event.target.value)} placeholder="搜索任务" aria-label="搜索任务" /><button type="button" onClick={() => { setSearch(""); setIsSearchOpen(false); }} aria-label="关闭搜索"><X size={17} /></button></label> : <button className="icon-button" type="button" onClick={() => setIsSearchOpen(true)} aria-label="搜索任务"><MagnifyingGlass size={19} /></button>}
           <button className="menu-button" type="button" onClick={() => setIsSidebarOpen((open) => !open)} aria-label="打开导航"><Hamburger size={22} /></button>
@@ -346,8 +347,8 @@ export function App() {
 
       {isPaletteOpen ? <PalettePopover value={themeColor} onChange={setThemeColor} onClose={() => setIsPaletteOpen(false)} /> : null}
 
-      <div className="workspace">
-        <aside className={`sidebar ${isSidebarOpen ? "is-open" : ""}`}>
+      <div className="workspace focus-workspace">
+        <aside className={`sidebar focus-sidebar ${isSidebarOpen ? "is-open" : ""}`}>
           <div className="sidebar-intro"><span className="sidebar-kicker">YOUR SPACE</span><span className="sidebar-date">{formatDisplayDate(todayKey)}</span></div>
           <nav aria-label="任务列表">
             {NAV_ITEMS.map(({ id, label, english, icon: Icon }) => {
@@ -358,16 +359,26 @@ export function App() {
           <div className="sidebar-footer"><div className="sidebar-mini-stat"><span>Due today</span><strong>{activeTodayCount}</strong></div><p>Plans become progress.</p></div>
         </aside>
 
-        <main className="main-content">
-          <div className="content-header"><div><p className="eyebrow">{currentCopy.eyebrow}</p><h1>{currentCopy.title}</h1><p className="subtitle">{currentCopy.subtitle}</p></div><div className="view-meta"><span>{formatCount(visibleTasks.length)}</span><span className="meta-dot" aria-hidden="true" /><span>{completedCount} done</span></div></div>
-          <form className="add-task-form" onSubmit={quickAddTask}><Plus size={20} weight="regular" /><input value={draft} onChange={(event) => setDraft(event.target.value)} placeholder={activeView === "long-term" ? "Add a recurring plan…" : "Add a new task…"} aria-label="添加新任务" /><button className="schedule-trigger" type="button" onClick={openComposer} aria-label="设置日期和重复"><CalendarBlank size={18} /></button><button type="submit" aria-label="添加任务" disabled={!draft.trim()}><Plus size={19} weight="bold" /></button></form>
-          <div className="list-toolbar"><div className="filter-tabs" aria-label="筛选任务">{FILTERS.map((item) => <button key={item.id} className={filter === item.id ? "is-active" : ""} type="button" onClick={() => setFilter(item.id)}>{item.label}</button>)}</div><span className="list-hint">点击左侧勾选框即可更新进度</span></div>
-          <div className="task-groups">
-            {groupedTasks.length ? groupedTasks.map((group) => <TaskGroup key={group.title} title={group.title} tasks={group.tasks} todayKey={todayKey} isPlan={group.isPlan} onToggle={toggleOccurrence} onDelete={deleteTask} />) : <div className="empty-state"><CheckCircle size={34} weight="thin" /><strong>{search ? "没有匹配的任务" : "这里还没有任务"}</strong><span>{search ? "换一个关键词试试。" : "把一件小事写下来，开始今天。"}</span></div>}
+        <main className="main-content focus-main">
+          <div className="focus-overview">
+            <div className="content-header"><div><p className="eyebrow">{currentCopy.eyebrow}</p><h1>{currentCopy.title}</h1><p className="subtitle">{currentCopy.subtitle}</p></div><div className="view-meta"><span>{formatCount(visibleTasks.length)}</span><span className="meta-dot" aria-hidden="true" /><span>{completedCount} done</span></div></div>
+            <div className="focus-metrics" aria-label="今日摘要">
+              <div className="focus-metric"><span>Due today</span><strong>{dailyTasks.length}</strong><small>需要执行</small></div>
+              <div className="focus-metric focus-metric-accent"><span>Progress</span><strong>{dailyProgress}%</strong><small>{dailyCompletedCount} 已完成</small></div>
+            </div>
           </div>
+          <section className="focus-task-surface" aria-label="任务工作台">
+            <div className="focus-surface-header"><div><span>EXECUTION LIST</span><strong>{currentCopy.helper}</strong></div><span>{activeTodayCount ? `${activeTodayCount} to go` : "All clear"}</span></div>
+            <form className="add-task-form" onSubmit={quickAddTask}><Plus size={20} weight="regular" /><input value={draft} onChange={(event) => setDraft(event.target.value)} placeholder={activeView === "long-term" ? "Add a recurring plan…" : "Add a new task…"} aria-label="添加新任务" /><button className="schedule-trigger" type="button" onClick={openComposer} aria-label="设置日期和重复"><CalendarBlank size={18} /></button><button type="submit" aria-label="添加任务" disabled={!draft.trim()}><Plus size={19} weight="bold" /></button></form>
+            <div className="list-toolbar"><div className="filter-tabs" aria-label="筛选任务">{FILTERS.map((item) => <button key={item.id} className={filter === item.id ? "is-active" : ""} type="button" onClick={() => setFilter(item.id)}>{item.label}</button>)}</div><span className="list-hint">点击左侧勾选框即可更新进度</span></div>
+            <div className="task-groups">
+              {groupedTasks.length ? groupedTasks.map((group) => <TaskGroup key={group.title} title={group.title} tasks={group.tasks} todayKey={todayKey} isPlan={group.isPlan} onToggle={toggleOccurrence} onDelete={deleteTask} />) : <div className="empty-state"><CheckCircle size={34} weight="thin" /><strong>{search ? "没有匹配的任务" : "这里还没有任务"}</strong><span>{search ? "换一个关键词试试。" : "把一件小事写下来，开始今天。"}</span></div>}
+            </div>
+          </section>
         </main>
 
-        <aside className="progress-pane">
+        <aside className="progress-pane focus-progress">
+          <div className="focus-progress-title"><div><span>TODAY'S SIGNAL</span><h2>完成率</h2></div><span>{formatDisplayDate(todayKey)}</span></div>
           <div className="progress-topline"><span>DAILY COMPLETION</span><span>Today</span></div>
           <ProgressRing value={dailyProgress} />
           <div className="progress-copy"><strong>{dailyCompletedCount} of {dailyTasks.length} tasks complete</strong><span>{activeTodayCount} to go</span></div>
