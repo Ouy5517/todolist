@@ -71,8 +71,6 @@ src/
 ├── styles.css           # Apple-inspired light UI 样式
 ├── taskUtils.js         # 日期、重复规则、完成率等纯函数
 └── taskUtils.test.js    # 日期与主题颜色测试
-docs/
-└── superpowers/         # 需求说明与实现计划
 ```
 
 ## 技术栈
