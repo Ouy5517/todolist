@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.npm-cache/
+.env
+.env.*
+!.env.example
+*.local
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
